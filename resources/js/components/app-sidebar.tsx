@@ -24,7 +24,7 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
     {
         title: 'Repositório',
-        href: 'https://github.com/laravel/react-starter-kit',
+        href: 'https://github.com/StellaThimoty/fatec-pi',
         icon: Folder,
     }
 ];
