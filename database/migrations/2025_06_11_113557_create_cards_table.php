@@ -17,13 +17,13 @@ return new class extends Migration
             $table->timestamps();
             $table->string('game');
             $table->string('name');
-            $table->string('setNumber')->unique();
+            $table->string('setNumber');
             $table->string('rarity');
             $table->string('state');
             $table->boolean('altart')->nullable();
             $table->string('color')->nullable();
             $table->unsignedInteger('quantity');
-            $table->string('observations')->nullable();
+            $table->text('observations')->nullable();
         });
 
         Schema::create('cards_pictures', function (Blueprint $table) {

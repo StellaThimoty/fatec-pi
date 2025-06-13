@@ -17,13 +17,13 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/cards',
     },
     {
-        title: 'Create',
-        href: '/cards/create'
+        title: 'Edit',
+        href: '/cards/edit'
     }
 ];
 
-export default function Create() {
         type CardsFields = {
+            id: number,
             game: string,
             name: string,
             setNumber: string,
@@ -36,27 +36,36 @@ export default function Create() {
             observations: string
         }
 
-        const {data, setData, post, processing, errors} = useForm<CardsFields>({
-            game: '',
-            name: '',
-            setNumber: '',
-            rarity: '',
-            state: '',
-            altart: false,
-            color: '',
-            quantity: 0,
-            // pics: '',
-            observations: ''
-        }) 
+        
+
+        type Props = {
+            card: CardsFields
+        }
+
+export default function Edit({card}: Props) {
+
 
         const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault();
-            post(route('cards.store'))
+            put(route('cards.update', card.id))
         }
+        const {data, setData, put, processing, errors} = useForm<CardsFields>({
+            id: card.id,
+            game: card.game,
+            name: card.name,
+            setNumber: card.setNumber,
+            rarity: card.rarity,
+            state: card.state,
+            altart: card.altart,
+            color: card.color,
+            quantity: card.quantity,
+            // pics: '',
+            observations: card.observations
+        }) 
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create" />
+            <Head title="Edit" />
                 <form onSubmit={handleSubmit} className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 {Object.keys(errors).length > 0 && (
                     <Alert>
@@ -73,7 +82,7 @@ export default function Create() {
                 )}
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card game'>Jogo</Label>
-                    <Select onValueChange={(value)=>setData('game', value)}>
+                    <Select onValueChange={(value)=>setData('game', value)} value={data.game}>
                         <SelectTrigger className="w-[280px]">
                           <SelectValue placeholder="Selecione um jogo" />
                         </SelectTrigger>
@@ -90,17 +99,17 @@ export default function Create() {
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card name'>Nome da Carta</Label>
-                    <Input placeholder='card name' className="w-[280px]" onChange={(e) => setData('name', e.target.value)}/>
+                    <Input placeholder='card name' className="w-[280px]" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
                 </div>
                     <div className="flex flex-col gap-2">
                     <Label>Quantidade</Label>
-                    <Input placeholder='Quantidade' className="w-[280px]" type='number' onChange={(e) => setData('quantity', parseInt(e.target.value))}/>
+                    <Input placeholder='Quantidade' className="w-[280px]" type='number' value={data.quantity} onChange={(e) => setData('quantity', parseInt(e.target.value))}/>
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label>Cor</Label>
-                    <Select onValueChange={(value)=>setData('color', value)}>
+                    <Select value={data.color} onValueChange={(value)=>setData('color', value)}>
                         <SelectTrigger className="w-[280px]">
-                          <SelectValue placeholder="Selecione um jogo" />
+                          <SelectValue placeholder="Selecione uma cor" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -117,11 +126,11 @@ export default function Create() {
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card set and number'>Set e número</Label>
-                    <Input placeholder='card set and number' className="w-[280px]" onChange={(e) => setData('setNumber', e.target.value)}/>
+                    <Input placeholder='card set and number' value={data.setNumber} className="w-[280px]" onChange={(e) => setData('setNumber', e.target.value)}/>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card rarity'>Raridade</Label>
-                    <Select onValueChange={(value) => setData('rarity', value)}>
+                    <Select value={data.rarity} onValueChange={(value) => setData('rarity', value)}>
                         <SelectTrigger className="w-[280px]">
                           <SelectValue placeholder="Selecione um jogo" />
                         </SelectTrigger>
@@ -168,7 +177,7 @@ export default function Create() {
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card state'>Estado</Label>
-                    <Select onValueChange={(value) => setData('state', value)}>
+                    <Select value={data.state} onValueChange={(value) => setData('state', value)}>
                         <SelectTrigger className="w-[280px]">
                           <SelectValue placeholder="Estado da carta" />
                         </SelectTrigger>
@@ -187,7 +196,7 @@ export default function Create() {
                 <div className='flex flex-row gap-2'>
                     <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950"
                     >Alternate art
-                    <Checkbox id='card altart' onCheckedChange={(value)=>setData('altart', value)}/>
+                    <Checkbox checked={data.altart as boolean} id='card altart' onCheckedChange={(value)=>setData('altart', value)}/>
                     </Label>
                 </div>
                 {/* <div className="flex flex-col gap-2">
@@ -196,9 +205,9 @@ export default function Create() {
                 </div> */}
                 <div className="flex flex-col gap-2">
                     <Label>Observações</Label>
-                    <Textarea placeholder='Observações' className='w-[280px]' onChange={(e)=>setData('observations', e.target.value)}></Textarea>
+                    <Textarea placeholder='Observações' className='w-[280px]' value={data.observations} onChange={(e)=>setData('observations', e.target.value)}></Textarea>
                 </div>
-                <Button type='submit'disabled={processing}  className="w-[180px]">Cadastrar</Button>
+                <Button type='submit' disabled={processing} className="w-[180px]">Editar</Button>
             </form>
         </AppLayout>
     );
