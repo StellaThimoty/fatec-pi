@@ -18,6 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             id: number,
             game: string,
             name: string,
+            price: number,
             setNumber: string,
             rarity: string,
             state: string,
@@ -69,6 +70,7 @@ export default function Cards() {
                                 <TableRow>
                                     <TableHead>Jogo</TableHead>
                                     <TableHead className="w-[100px]">Nome</TableHead>
+                                    <TableHead>Preço</TableHead>
                                     <TableHead>Raridade</TableHead>
                                     <TableHead>Número</TableHead>
                                     <TableHead>Cor</TableHead>
@@ -82,6 +84,7 @@ export default function Cards() {
                                 <TableRow key={key}>
                                     <TableCell>{card.game}</TableCell>
                                     <TableCell>{card.name}</TableCell>
+                                    <TableCell>R$ {card.price}</TableCell>
                                     <TableCell>{card.rarity}</TableCell>
                                     <TableCell>{card.setNumber}</TableCell>
                                     <TableCell>{card.color}</TableCell>

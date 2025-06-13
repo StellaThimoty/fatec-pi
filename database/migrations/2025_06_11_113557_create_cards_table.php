@@ -17,6 +17,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('game');
             $table->string('name');
+            $table->decimal('price');
             $table->string('setNumber');
             $table->string('rarity');
             $table->string('state');

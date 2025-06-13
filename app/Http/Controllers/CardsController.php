@@ -30,6 +30,7 @@ class CardsController extends Controller
         $request->validate([
         'game' => 'required|string',
         'name' => 'required|string',
+        'price' => 'required|decimal:0,2',
         'setNumber' => 'required|string',
         'rarity' => 'required|string',
         'state' => 'required|string',
@@ -42,6 +43,7 @@ class CardsController extends Controller
         $card->update([
             'game' => $request->input('game'),
             'name' => $request->input('name'),
+            'price' => $request->input('price'),
             'setNumber' => $request->input('setNumber'),
             'rarity' => $request->input('rarity'),
             'state' => $request->input('state'),
@@ -55,10 +57,10 @@ class CardsController extends Controller
     }
 
     public function store(Request $request) {
-        // dd($request);
         $request->validate([
         'game' => 'required|string',
         'name' => 'required|string',
+        'price' => 'required|decimal:0,2',
         'setNumber' => 'required|string',
         'rarity' => 'required|string',
         'state' => 'required|string',
@@ -74,6 +76,7 @@ class CardsController extends Controller
             'userId' => $id,
             'game' => $request->input('game'),
             'name' => $request->input('name'),
+            'price' => $request->input('price'),
             'setNumber' => $request->input('setNumber'),
             'rarity' => $request->input('rarity'),
             'state' => $request->input('state'),

@@ -22,11 +22,11 @@ const alunos: {aluno: string, ra: string}[] = [
     },
     {
         aluno: 'Henrique Moller',
-        ra: 'abibubebo',
+        ra: '1050482223051',
     },
     {
         aluno: 'Murilo Gruthner',
-        ra: 'baiauaeao',
+        ra: '10504822230XX',
     }
 ]
 

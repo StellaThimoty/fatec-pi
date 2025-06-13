@@ -10,6 +10,7 @@ import { Select } from '@radix-ui/react-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { CircleAlert } from 'lucide-react';
+import MultipleSelector, { Option } from '@/components/ui/multiselect';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,6 +27,7 @@ export default function Create() {
         type CardsFields = {
             game: string,
             name: string,
+            price: number,
             setNumber: string,
             rarity: string,
             state: string,
@@ -39,6 +41,7 @@ export default function Create() {
         const {data, setData, post, processing, errors} = useForm<CardsFields>({
             game: '',
             name: '',
+            price: 0.00,
             setNumber: '',
             rarity: '',
             state: '',
@@ -49,9 +52,36 @@ export default function Create() {
             observations: ''
         }) 
 
+        const optionsDcg: Option[] = [
+            {label: 'Azul', value: 'Azul'},
+            {label: 'Verde', value: 'Verde'},
+            {label: 'Branca', value: 'Branca'},
+            {label: 'Preta', value: 'Preta'},
+            {label: 'Roxa', value: 'Roxa'},
+            {label: 'Amarela', value: 'Amarela'},
+            {label: 'Vermelha', value: 'Vermelha'},
+        ]
+
+        const optionsMtg: Option[] = [
+            {label: 'Azul', value: 'Azul'},
+            {label: 'Verde', value: 'Verde'},
+            {label: 'Branca', value: 'Branca'},
+            {label: 'Preta', value: 'Preta'},
+            {label: 'Vermelha', value: 'Vermelha'},
+        ]
+
         const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault();
             post(route('cards.store'))
+        }
+        
+        const handleMultiSelect = (values: Option[]) => {
+            let color = '';
+            values.map((value, key) => {
+                color += value.value + ' ';
+            })
+            
+            setData('color', color.trimEnd());
         }
 
     return (
@@ -80,53 +110,72 @@ export default function Create() {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel className='underline'>Jogos</SelectLabel>
-                                <SelectItem value='digimon'>Digimon Card Game</SelectItem>
-                                <SelectItem value='magic'>Magic: The Gathering</SelectItem>
-                                <SelectItem value='pokemon'>Pokémon</SelectItem>
-                                <SelectItem value='yugioh'>Yu-Gi-Oh! TCG</SelectItem>
+                                <SelectItem value='Digimon'>Digimon Card Game</SelectItem>
+                                <SelectItem value='Magic'>Magic: The Gathering</SelectItem>
+                                <SelectItem value='Pokemon'>Pokémon</SelectItem>
+                                <SelectItem value='Yugioh'>Yu-Gi-Oh! TCG</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card name'>Nome da Carta</Label>
-                    <Input placeholder='card name' className="w-[280px]" onChange={(e) => setData('name', e.target.value)}/>
+                    <Input placeholder='Nome da Carta' className="w-[280px]" value={data.name} onChange={(e) => setData('name', e.target.value)}/>
                 </div>
                     <div className="flex flex-col gap-2">
                     <Label>Quantidade</Label>
-                    <Input placeholder='Quantidade' className="w-[280px]" type='number' onChange={(e) => setData('quantity', parseInt(e.target.value))}/>
+                    <Input placeholder='Quantidade' className="w-[280px]" type='number' value={data.quantity} onChange={(e) => setData('quantity', parseInt(e.target.value))}/>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Label>Cor</Label>
-                    <Select onValueChange={(value)=>setData('color', value)}>
-                        <SelectTrigger className="w-[280px]">
-                          <SelectValue placeholder="Selecione um jogo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel className='underline'>Cor da carta</SelectLabel>
-                                <SelectItem value='Azul'>Azul</SelectItem>
-                                <SelectItem value='Verde'>Verde</SelectItem>
-                                <SelectItem value='Branca/Amarela'>Branca/Amarela</SelectItem>
-                                <SelectItem value='Preta'>Preta</SelectItem>
-                                <SelectItem value='Roxa'>Roxa</SelectItem>
-                                <SelectItem value='Vermelha'>Vermelha</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <Label>Preço</Label>
+                    <Input placeholder='Preço' className="w-[280px]" type='number' value={data.price} pattern="^\d*(\.\d{0,2})?$" step=".01" onChange={(e) => setData('price', parseFloat(e.target.value))}/>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card set and number'>Set e número</Label>
-                    <Input placeholder='card set and number' className="w-[280px]" onChange={(e) => setData('setNumber', e.target.value)}/>
+                    <Input placeholder='Set e Numero' className="w-[280px]" value={data.setNumber} onChange={(e) => setData('setNumber', e.target.value)}/>
                 </div>
+                {data.game === "Digimon" && 
+                <div className="flex flex-col gap-2">
+                    <Label>Cor</Label>
+                        <MultipleSelector  className="w-[280px]" onChange={(values) => handleMultiSelect(values)} defaultOptions={optionsDcg} placeholder='Selecione uma cor'/>
+                </div>}
+                {data.game === "Magic" && 
+                <div className="flex flex-col gap-2">
+                    <Label>Cor</Label>
+                        <MultipleSelector  className="w-[280px]" onChange={(values) => handleMultiSelect(values)} defaultOptions={optionsMtg} placeholder='Selecione uma cor'/>
+                </div>}
+                {data.game === "Pokemon" && <div className="flex flex-col gap-2">
+                    <Label>Cor/Tipo</Label>
+                    <Select onValueChange={(value)=>setData('color', value)}>
+                        <SelectTrigger className="w-[280px]">
+                          <SelectValue placeholder="Selecione a cor/tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel className='underline'>Cor/Tipo da carta</SelectLabel>
+                                <SelectItem value='Grass'>Grass</SelectItem>
+                                <SelectItem value='Fire'>Fire</SelectItem>    
+                                <SelectItem value='Water'>Water</SelectItem>
+                                <SelectItem value='Lightning'>Lightning</SelectItem>
+                                <SelectItem value='Fighting'>Fighting</SelectItem>
+                                <SelectItem value='Psychic'>Psychic</SelectItem>
+                                <SelectItem value='Darkness'>Darkness</SelectItem>
+                                <SelectItem value='Metal'>Metal</SelectItem>
+                                <SelectItem value='Dragon'>Dragon</SelectItem>
+                                <SelectItem value='Fairy'>Fairy</SelectItem>
+                                <SelectItem value='Normal'>Normal</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>}
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card rarity'>Raridade</Label>
-                    <Select onValueChange={(value) => setData('rarity', value)}>
+                    <Select value={data.rarity} onValueChange={(value) => setData('rarity', value)}>
                         <SelectTrigger className="w-[280px]">
                           <SelectValue placeholder="Selecione um jogo" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectGroup>
+                            {data.game === "Digimon" && <SelectGroup>
                                 <SelectLabel className='underline'>Digimon Card Game</SelectLabel>
                                 <SelectItem value='dcg common'>Comum - DCG</SelectItem>
                                 <SelectItem value='dcg uncommon'>Incomum - DCG</SelectItem>
@@ -134,16 +183,16 @@ export default function Create() {
                                 <SelectItem value='dcg super rare'>Super Rara - DCG</SelectItem>
                                 <SelectItem value='dcg secret rare'>Secreta - DCG</SelectItem>
                                 <SelectItem value='dcg promo'>Promocional - DCG</SelectItem>
-                            </SelectGroup>
-                            <SelectGroup>
+                            </SelectGroup>}
+                            {data.game === "Magic" && <SelectGroup>
                                 <SelectLabel className='underline'>Magic: The Gathering</SelectLabel>
                                 <SelectItem value='mtg common'>Comum - MTG</SelectItem>
                                 <SelectItem value='mtg uncommon'>Incomum - MTG</SelectItem>
                                 <SelectItem value='mtg rare'>Rara - MTG</SelectItem>
                                 <SelectItem value='mtg mythic'>Mítica - MTG</SelectItem>
                                 <SelectItem value='mtg promo'>Promocional - MTG</SelectItem>
-                            </SelectGroup>
-                            <SelectGroup>
+                            </SelectGroup>}
+                            {data.game === "Pokemon" && <SelectGroup>
                                 <SelectLabel className='underline'>Pokémon</SelectLabel>
                                 <SelectItem value='ptcg common'>Comum - PCG</SelectItem>
                                 <SelectItem value='ptcg uncommon'>Incomum - PCG</SelectItem>
@@ -151,8 +200,8 @@ export default function Create() {
                                 <SelectItem value='ptcg super rare'>Super Rara - PCG</SelectItem>
                                 <SelectItem value='ptcg ultra rare'>Ultra Rara - PCG</SelectItem>
                                 <SelectItem value='ptcg promo'>Promocional - PCG</SelectItem>
-                            </SelectGroup>
-                            <SelectGroup>
+                            </SelectGroup>}
+                            {data.game === "Yugioh" && <SelectGroup>
                                 <SelectLabel className='underline'>Yu-Gi-Oh!</SelectLabel>
                                 <SelectItem value='ygo common'>Comum - YGO</SelectItem>
                                 <SelectItem value='ygo rare'>Rara - YGO</SelectItem>
@@ -162,13 +211,13 @@ export default function Create() {
                                 <SelectItem value='ygo starlight rare'>Rara Estelar - YGO</SelectItem>
                                 <SelectItem value='ygo ghost rare'>Rara Fantasma - YGO</SelectItem>
                                 <SelectItem value='ygo promo'>Promocional - YGO</SelectItem>
-                            </SelectGroup>
+                            </SelectGroup>}
                         </SelectContent>
                     </Select>
                 </div>
                 <div className='flex flex-col gap-2'>
                     <Label htmlFor='card state'>Estado</Label>
-                    <Select onValueChange={(value) => setData('state', value)}>
+                    <Select value={data.state} onValueChange={(value) => setData('state', value)}>
                         <SelectTrigger className="w-[280px]">
                           <SelectValue placeholder="Estado da carta" />
                         </SelectTrigger>
@@ -177,7 +226,7 @@ export default function Create() {
                                 <SelectLabel className='underline'>Estado</SelectLabel>
                                 <SelectItem value='m'>Mint - M</SelectItem>
                                 <SelectItem value='nm'>Near Mint - NM</SelectItem>
-                                <SelectItem value='lp'>Light Played - LP</SelectItem>
+                                <SelectItem value='sp'>Slightly Played - SP</SelectItem>
                                 <SelectItem value='hp'>Heavy Played - HP</SelectItem>
                                 <SelectItem value='d'>Damaged - D</SelectItem>
                             </SelectGroup>
@@ -187,7 +236,7 @@ export default function Create() {
                 <div className='flex flex-row gap-2'>
                     <Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950"
                     >Alternate art
-                    <Checkbox id='card altart' onCheckedChange={(value)=>setData('altart', value)}/>
+                    <Checkbox id='card altart' checked={data.altart as boolean} onCheckedChange={(value)=>setData('altart', value)}/>
                     </Label>
                 </div>
                 {/* <div className="flex flex-col gap-2">
@@ -196,7 +245,7 @@ export default function Create() {
                 </div> */}
                 <div className="flex flex-col gap-2">
                     <Label>Observações</Label>
-                    <Textarea placeholder='Observações' className='w-[280px]' onChange={(e)=>setData('observations', e.target.value)}></Textarea>
+                    <Textarea placeholder='Observações' className='w-[280px]' value={data.observations} onChange={(e)=>setData('observations', e.target.value)}></Textarea>
                 </div>
                 <Button type='submit'disabled={processing}  className="w-[180px]">Cadastrar</Button>
             </form>
