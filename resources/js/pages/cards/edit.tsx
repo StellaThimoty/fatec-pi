@@ -34,8 +34,8 @@ const breadcrumbs: BreadcrumbItem[] = [
             altart: string | boolean,
             color: string,
             quantity: number,
-            // pics: string,
-            observations: string
+            pics: File | null,
+            observations: string | null
         }
 
         type Props = {
@@ -46,7 +46,8 @@ export default function Edit({card}: Props) {
 
         const handleSubmit = (e: React.FormEvent) => {
             e.preventDefault();
-            put(route('cards.update', card.id))
+            console.log(data)
+            put(route('cards.update', card.id), { forceFormData: true})
         }
 
         const {data, setData, put, processing, errors} = useForm<CardsFields>({
@@ -60,7 +61,7 @@ export default function Edit({card}: Props) {
             altart: card.altart,
             color: card.color,
             quantity: card.quantity,
-            // pics: '',
+            pics: card.pics,
             observations: card.observations
         })
 
@@ -104,8 +105,8 @@ export default function Edit({card}: Props) {
     return (
     
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create" />
-                <form onSubmit={handleSubmit} className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
+            <Head title="Edit" />
+                <form onSubmit={handleSubmit} className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto" encType='multipart/form-data'>
                 {Object.keys(errors).length > 0 && (
                     <Alert>
                         <CircleAlert/>
@@ -257,13 +258,13 @@ export default function Edit({card}: Props) {
                     <Checkbox id='card altart' checked={data.altart as boolean} onCheckedChange={(value)=>setData('altart', value)}/>
                     </Label>
                 </div>
-                {/* <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2">
                     <Label>Fotos</Label>
-                    <Input placeholder='card pics' className="w-[280px]" type='file' accept='image/*,.pdf' multiple onChange={(e)=> setData('pics', e.target.value)}/>
-                </div> */}
+                    <Input placeholder='card pics' className="w-[280px]" type='file' accept='image/*' onChange={(e)=> setData('pics', e.target.files?.[0] || null)}/>
+                </div>
                 <div className="flex flex-col gap-2">
                     <Label>Observações</Label>
-                    <Textarea placeholder='Observações' className='w-[280px]' value={data.observations} onChange={(e)=>setData('observations', e.target.value)}></Textarea>
+                    <Textarea placeholder='Observações' className='w-[280px]' value={data.observations ?? ''} onChange={(e)=>setData('observations', e.target.value)}></Textarea>
                 </div>
                 <Button type='submit'disabled={processing}  className="w-[180px]">Editar</Button>
             </form>

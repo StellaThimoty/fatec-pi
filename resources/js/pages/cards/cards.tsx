@@ -25,7 +25,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             altart: string | boolean,
             color: string,
             quantity: number,
-            // pics: string,
+            image: string,
             observations: string
         }
 
@@ -39,7 +39,8 @@ type PageProps = {
 export default function Cards() {
     const { cards, flash } = usePage().props as unknown as PageProps;
     const { processing, delete:destroy } = useForm();
-
+    
+    cards.map((card) => (console.log(card)))
     const handleDelete = (id: number) => {
         if (confirm('Você quer deletar esta carta?')) {
             destroy(route('cards.destroy', id));    
@@ -75,6 +76,7 @@ export default function Cards() {
                                     <TableHead>Número</TableHead>
                                     <TableHead>Cor</TableHead>
                                     <TableHead>Quantidade</TableHead>
+                                    <TableHead>Fotos</TableHead>
                                     <TableHead>Observações</TableHead>
                                     <TableHead className="text-right">Ações</TableHead>
                                 </TableRow>
@@ -88,7 +90,8 @@ export default function Cards() {
                                     <TableCell>{card.rarity}</TableCell>
                                     <TableCell>{card.setNumber}</TableCell>
                                     <TableCell>{card.color}</TableCell>
-                                    <TableCell>{card.quantity}</TableCell>
+                                    <TableCell>{card.quantity}</TableCell>  
+                                    <TableCell><img src={card.image}></img></TableCell>
                                     <TableCell>{card.observations}</TableCell>
                                     <TableCell className='flex flex-row justify-end gap-4'>
                                         <Link href={route('cards.edit', card.id)}><Button disabled={processing} variant={'secondary'}>Editar</Button></Link>
